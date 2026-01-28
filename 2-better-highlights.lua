@@ -14,15 +14,16 @@ local BD = require("ui/bidi")
 local Screen = require("device").screen
 
 
+
 BlitBuffer_orig_highlight_colors = BlitBuffer.HIGHLIGHT_COLORS
 BlitBuffer.HIGHLIGHT_COLORS = {
 
-    ["red"]    = "#ffb8be",  
-    ["yellow"] = "#ffe38f",  
-    ["green"]  = "#c2ff99", 
-    ["cyan"]   = "#94d1c9",  
-    ["blue"]   = "#c5c2ff",  
-    ["purple"] = "#ebaafd",  
+    ["red"]    = "#ffb8be",   -- Updated color from #FF3300
+    ["yellow"] = "#ffe38f",   -- Updated color from #FFFF33
+    ["green"]  = "#c2ff99",   -- Updated color from #00AA66
+    ["cyan"]   = "#94d1c9",     -- Unchanged "#bddbd6ff"
+    ["blue"]   = "#c5c2ff",   -- Updated color from #0066FF
+    ["purple"] = "#ebaafd",   -- Updated color from #EE00FF
 
     ["red_dark"] = "#bb0010",
     ["yellow_dark"] = "#dba400",  
@@ -31,6 +32,9 @@ BlitBuffer.HIGHLIGHT_COLORS = {
     ["blue_dark"]   = "#0d00ca",   
     ["purple_dark"] = "#a000cc",  
 }
+
+
+
 
 
 
@@ -268,6 +272,33 @@ function ReaderHighlight:onShowHighlightMenu(index)
     --       or the buggy Sage kernel may alpha-blend it into the page (with a bogus alpha value, to boot)...
     UIManager:show(self.highlight_dialog, "[ui]")
 end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -515,6 +546,11 @@ end
 
 
 
+
+
+
+
+
 function ReaderHighlight:saveHighlightFormatted(extend_to_sentence,hlStyle,hlColor)
     logger.dbg("save highlight")
     if self.hold_pos and not self.selected_text then
@@ -559,6 +595,17 @@ end
 
 
 
+
+
+
+
+
+
+
+
+
+
+
 function ReaderHighlight:editHighlightColorFormatted(index, hlStyle, hlColor)
     local item = self.ui.annotation.annotations[index]
     self:writePdfAnnotation("delete", item)
@@ -580,16 +627,10 @@ end
 
 
 
--- Патч, чтобы увеличить толщину подчёркивания
 
-local ReaderView = require("apps/reader/modules/readerview")
-local Size = require("ui/size")
-local Screen = require("device").screen
 
-local ReaderView_drawHighlightRect = ReaderView.drawHighlightRect
 
-ReaderView.drawHighlightRect = function(self, bb, _x, _y, rect, drawer, color, draw_note_mark)
-    Size.line.thick = Screen:scaleBySize(3.0) -- new thickness
-    ReaderView_drawHighlightRect(self, bb, _x, _y, rect, drawer, color, draw_note_mark)
-    Size.line.thick = Screen:scaleBySize(1.5)
-end
+
+
+
+
