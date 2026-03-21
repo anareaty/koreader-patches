@@ -26,7 +26,7 @@ Creates actions for every collection, so you can access them directly, without o
 
 ### 2-both-buttons-go-forward.lua
 
-Adds an option to make both forward and backward buttons to go forward in every orientation. Tested on Kobo Libra Colour. You need to set up the gesture action to enable this option. can be toggled on and off.
+Adds an option to make both forward and backward buttons to go forward in every orientation. Tested on Kobo Libra Colour. You need to set up the gesture action to enable this option. Can be toggled on and off.
 
 
 
