@@ -3,10 +3,13 @@ local Dispatcher = require("dispatcher")
 local FileManager = require("apps/filemanager/filemanager")
 local FileManagerMenu = require("apps/filemanager/filemanagermenu")
 local framebuffer = require("ffi/framebuffer")
+
 local ReaderMenu = require("apps/reader/modules/readermenu")
 local ReaderUI = require("apps/reader/readerui")
 local _ = require("gettext")
 
+
+local orig_event_map = {}
 
 local function init_patch(app)
     Device:applyBothButtonsState()
@@ -50,12 +53,11 @@ end
 
 
 
-
-
-
 function Device:setBothButtonsForvard()
     if self:hasKeys() and self.input and self.input.event_map then
-        self.orig_event_map = {}
+        if self.orig_event_map == nil then
+            self.orig_event_map = {}
+        end
 
         -- Replace back buttons to forward buttons
         -- Only right page buttons are tested since they are the only buttons on KLC
@@ -65,6 +67,7 @@ function Device:setBothButtonsForvard()
             if value == "LPgBack" then
                 self.input.event_map[key] = "LPgFwd"
                 self.orig_event_map[key] = "LPgBack"
+
             elseif value == "RPgBack" then
                 self.input.event_map[key] = "RPgFwd"
                 self.orig_event_map[key] = "RPgBack"
@@ -89,9 +92,11 @@ function Device:setBothButtonsNormal()
         -- Restore event map from saved property or do nothing
 
         if self.orig_event_map then
+
             for key, value in pairs(self.orig_event_map) do
                 if value == "LPgBack" then
                     self.input.event_map[key] = "LPgBack"
+    
                 elseif value == "RPgBack" then
                     self.input.event_map[key] = "RPgBack"
                 end
@@ -122,6 +127,7 @@ end
 
 local function createMenuItem()
     return {
+        sorting_hint = "physical_buttons_setup",
         text = _("Both buttons go forward"),
         checked_func = function()
             return G_reader_settings:isTrue("both_buttons_forward")
@@ -134,19 +140,18 @@ local function createMenuItem()
     }
 end
 
-local function patch(menu, order)
-    table.insert(order.device, "both_buttons_forward")
-    menu.menu_items.both_buttons_forward = createMenuItem()
-end
 
 local orig_FileManagerMenu_setUpdateItemTable = FileManagerMenu.setUpdateItemTable
 function FileManagerMenu:setUpdateItemTable()
-    patch(self, require("ui/elements/filemanager_menu_order"))
-    orig_FileManagerMenu_setUpdateItemTable(self)
+    self.menu_items.both_buttons_forward = createMenuItem()
+    orig_FileManagerMenu_setUpdateItemTable(self)   
 end
 
 local orig_ReaderMenu_setUpdateItemTable = ReaderMenu.setUpdateItemTable
 function ReaderMenu:setUpdateItemTable()
-    patch(self, require("ui/elements/reader_menu_order"))
-    orig_ReaderMenu_setUpdateItemTable(self)
+    self.menu_items.both_buttons_forward = createMenuItem()
+    orig_ReaderMenu_setUpdateItemTable(self) 
 end
+
+
+
