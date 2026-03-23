@@ -3,13 +3,9 @@ local Dispatcher = require("dispatcher")
 local FileManager = require("apps/filemanager/filemanager")
 local FileManagerMenu = require("apps/filemanager/filemanagermenu")
 local framebuffer = require("ffi/framebuffer")
-
 local ReaderMenu = require("apps/reader/modules/readermenu")
 local ReaderUI = require("apps/reader/readerui")
 local _ = require("gettext")
-
-
-local orig_event_map = {}
 
 local function init_patch(app)
     Device:applyBothButtonsState()
