@@ -1,10 +1,11 @@
 local Device = require("device")
 local Dispatcher = require("dispatcher")
 local FileManager = require("apps/filemanager/filemanager")
+local FileManagerMenu = require("apps/filemanager/filemanagermenu")
 local framebuffer = require("ffi/framebuffer")
+local ReaderMenu = require("apps/reader/modules/readermenu")
 local ReaderUI = require("apps/reader/readerui")
 local _ = require("gettext")
-
 
 
 local function init_patch(app)
@@ -115,4 +116,37 @@ function Device:applyBothButtonsState()
     else
         self:setBothButtonsNormal()
     end
+end
+
+
+
+local function createMenuItem()
+    return {
+        text = _("Both buttons go forward"),
+        checked_func = function()
+            return G_reader_settings:isTrue("both_buttons_forward")
+        end,
+        callback = function(touchmenu_instance)
+            G_reader_settings:saveSetting("both_buttons_forward",  not G_reader_settings:isTrue("both_buttons_forward"))
+            Device:applyBothButtonsState()
+            touchmenu_instance:updateItems()
+        end,
+    }
+end
+
+local function patch(menu, order)
+    table.insert(order.device, "both_buttons_forward")
+    menu.menu_items.both_buttons_forward = createMenuItem()
+end
+
+local orig_FileManagerMenu_setUpdateItemTable = FileManagerMenu.setUpdateItemTable
+function FileManagerMenu:setUpdateItemTable()
+    patch(self, require("ui/elements/filemanager_menu_order"))
+    orig_FileManagerMenu_setUpdateItemTable(self)
+end
+
+local orig_ReaderMenu_setUpdateItemTable = ReaderMenu.setUpdateItemTable
+function ReaderMenu:setUpdateItemTable()
+    patch(self, require("ui/elements/reader_menu_order"))
+    orig_ReaderMenu_setUpdateItemTable(self)
 end
